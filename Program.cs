@@ -1,4 +1,4 @@
-﻿using LevelDB;
+using LevelDB;
 using System;
 using System.IO;
 using System.Text;
@@ -17,7 +17,9 @@ namespace SteamCollectionPOC
                     var keyText = Encoding.UTF8.GetString(key).Split("\0\u0001");
                     if (!keyText[0].Equals("_https://steamloopback.host")) continue;
                     if (!keyText[1].Contains("cloud-storage-namespace")) continue;
-                    File.WriteAllBytes(Path.Combine(root, keyText[1]+".json"), value);
+                    var utf = Encoding.Convert(Encoding.BigEndianUnicode, Encoding.UTF8, value);
+                    File.WriteAllBytes(Path.Combine(root, keyText[1]+".json"), utf);
+                    Console.WriteLine(Encoding.UTF8.GetString(utf));
                 }
             }
         }
