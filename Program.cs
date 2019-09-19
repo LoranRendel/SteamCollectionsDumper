@@ -18,9 +18,18 @@ namespace SteamCollectionPOC
                     if (!keyText[0].Equals("_https://steamloopback.host")) continue;
                     if (!keyText[1].Contains("cloud-storage-namespace")) continue;
                     var utf = Encoding.Convert(Encoding.BigEndianUnicode, Encoding.UTF8, value);
-                    File.WriteAllBytes(Path.Combine(root, keyText[1]+".json"), utf);
+                    var dest = Path.Combine(root, keyText[1] + ".json");
+                    if (File.Exists(dest))
+                    {
+                        db.Put(key, File.ReadAllBytes(dest));
+                    }
+                    else
+                    {
+                        File.WriteAllBytes(Path.Combine(root, keyText[1] + ".json"), value);
+                    }
                     Console.WriteLine(Encoding.UTF8.GetString(utf));
                 }
+                db.Close();
             }
         }
     }
